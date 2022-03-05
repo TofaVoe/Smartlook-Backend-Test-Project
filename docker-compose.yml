@@ -29,13 +29,14 @@ services:
       - 9200:9200
 
   app:
-    image: .
+    build: .
+    container_name: api
     working_dir: /home/node/app
     volumes:
-      - ./app:/home/node/app
-    expose:
-      - "3000"
-    command: "npm start"
+      - .:/home/node/app
+    command: bash -c "npm run dev"
+    ports:
+      - "3000:3000"
 
 
 volumes:
