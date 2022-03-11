@@ -2,33 +2,34 @@ import Koa from "koa";
 import bodyParser from "koa-bodyparser";
 import cors from "koa2-cors";
 import logger from "koa-logger";
-import Router from "koa-router";
+
+
+import router from "./routes";
+import {config} from "./types/IConfig";
+import postgresql from "./services/postgresql";
 
 const app = new Koa();
+const apiRouter = router
+const PORT = config.port;
 
-const PORT = process.env.PORT || 3000;
 
+app.context.db = postgresql;
 app.use(bodyParser());
+
 app.use(
     cors({
-        origin: "*"
+      origin: "*",
+      allowMethods: ['GET', 'HEAD', 'PUT', 'POST', 'DELETE', 'PATCH']
     })
 );
+
 app.use(logger());
+app.use(apiRouter.routes());
 
-const router = new Router();
-
-router.get(`/`, async (ctx) => {
-    try {
-        ctx.body = {
-            status: "success!",
-        };
-    } catch (err) {
-        console.error(err);
-    }
-});
-
-app.use(router.routes());
+if (process.env.NODE_ENV !== 'test') {
+  console.log('Test env');
+  console.log(PORT);
+}
 
 const server = app
     .listen(PORT, async () => {
