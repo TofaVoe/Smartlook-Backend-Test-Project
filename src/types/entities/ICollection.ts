@@ -13,4 +13,8 @@ interface ICollectionRename {
   name: string;
 }
 
-export {ICollection, ICollectionAdd, ICollectionRename}
+interface ICollectionRemove {
+  id: number;
+}
+
+export {ICollection, ICollectionAdd, ICollectionRename, ICollectionRemove}

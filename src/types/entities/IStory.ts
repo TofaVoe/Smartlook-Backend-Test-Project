@@ -10,8 +10,14 @@ interface IStory {
   url: string;
 }
 
-interface IStoryAdd {
-  id: number;
+interface IStoryAdd  {
+  storyId: number;
+  collectionId: number;
 }
 
-export {IStory, IStoryAdd}
+interface IStoryRemove {
+  storyId: number;
+  collectionId: number
+}
+
+export {IStory, IStoryAdd, IStoryRemove}

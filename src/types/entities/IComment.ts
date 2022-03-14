@@ -6,3 +6,5 @@ interface IComment {
   by: string;
   parent: number; // The comment's parent: either another comment or the relevant story.
 }
+
+export default
