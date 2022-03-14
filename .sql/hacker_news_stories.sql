@@ -2,27 +2,9 @@
 
 \connect "hacker_news_stories";
 
-DROP TABLE IF EXISTS "story";
-CREATE TABLE "public"."story" (
-    "id" integer NOT NULL,
-    "time" timestamp NOT NULL,
-    "type" character(25) NOT NULL,
-    "title" character(1) NOT NULL,
-    "score" integer NOT NULL,
-    "by" character(25) NOT NULL,
-    "descendants" integer NOT NULL,
-    "kids" text NOT NULL,
-    "url" character(1) NOT NULL
-) WITH (oids = false);
-
-COMMENT ON COLUMN "public"."story"."by" IS 'author - name';
-
-
-DROP TABLE IF EXISTS collection;
-DROP SEQUENCE IF EXISTS story_collection_id_seq;
 CREATE SEQUENCE story_collection_id_seq INCREMENT 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1;
 
-CREATE TABLE "public"."story_collection" (
+CREATE TABLE "public"."collection" (
     "id" integer DEFAULT nextval('story_collection_id_seq') NOT NULL,
     "name" character(25) NOT NULL,
     "owner_id" integer NOT NULL,
@@ -30,8 +12,31 @@ CREATE TABLE "public"."story_collection" (
 ) WITH (oids = false);
 
 
-DROP TABLE IF EXISTS "story_comment";
-DROP SEQUENCE IF EXISTS story_comment_id_seq;
+CREATE SEQUENCE collection_has_story_id_seq INCREMENT 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1;
+
+CREATE TABLE "public"."collection_has_story" (
+    "id" integer DEFAULT nextval('collection_has_story_id_seq') NOT NULL,
+    "id_story" integer NOT NULL,
+    "id_collection" integer,
+    CONSTRAINT "collection_has_story_pk" PRIMARY KEY ("id")
+) WITH (oids = false);
+
+
+CREATE TABLE "public"."story" (
+    "id" integer NOT NULL,
+    "time" timestamp NOT NULL,
+    "type" character(25) NOT NULL,
+    "title" character(50) NOT NULL,
+    "score" integer NOT NULL,
+    "by" character(25) NOT NULL,
+    "descendants" integer NOT NULL,
+    "kids" text NOT NULL,
+    "url" character(255) NOT NULL
+) WITH (oids = false);
+
+COMMENT ON COLUMN "public"."story"."by" IS 'author - name';
+
+
 CREATE SEQUENCE story_comment_id_seq INCREMENT 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1;
 
 CREATE TABLE "public"."story_comment" (
@@ -46,8 +51,6 @@ CREATE TABLE "public"."story_comment" (
 ) WITH (oids = false);
 
 
-DROP TABLE IF EXISTS "user";
-DROP SEQUENCE IF EXISTS user_id_seq;
 CREATE SEQUENCE user_id_seq INCREMENT 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1;
 
 CREATE TABLE "public"."user" (
@@ -62,4 +65,4 @@ CREATE TABLE "public"."user" (
 ) WITH (oids = false);
 
 
--- 2022-03-10 19:12:15.161532+00
+-- 2022-03-14 14:03:53.238059+00
