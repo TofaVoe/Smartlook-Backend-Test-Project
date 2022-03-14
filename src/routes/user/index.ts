@@ -1,17 +1,13 @@
 import {config} from "../../types/IConfig";
 import {IUserLogin, IUserRegister} from "../../types/entities/IUser";
-// import Koa, {Context} from "koa";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 import Koa, {Next} from "koa";
 import {IJwtToken} from "../../types/IJwtToken";
 
-
 // https://github.com/koajs/koa/issues/1516
 async function register(ctx: any){ // Koa.Context -- resolve how to type context.body
-  console.log(ctx.request.body)
-
   const user = <IUserRegister>ctx.request.body;
   // const {name, email, password} = user; This probably don't work due the issue with Koa.Context I have
   const name: string = user.name;
@@ -71,13 +67,9 @@ async function login(ctx: any) {
     if (res.rows.length) {
       const data = res.rows[0];
       const hashed_password = data.password;
-      // const hashed_password_2 = await bcrypt.hash(password, config.security.salt);
 
       const passwordMatch: boolean = await bcrypt.compare(password, hashed_password);
-
-      console.log(passwordMatch)
-
-      if (true) {
+      if (passwordMatch) {
         const token = jwt.sign(
           { id: data.id},
           config.jwt.secret,
@@ -110,11 +102,15 @@ async function login(ctx: any) {
 // Middleware
 async function verify(ctx: Koa.Context, next: Next) {
   if (ctx.headers && ctx.headers.authorization){
-    const token = ctx.headers.authorization;
-    // const decodedToken = <IJwtToken>jwt.verify(token, config.jwt.secret);
-    ctx.app.context.userid = 20; // decodedToken.id;
-    // const query = "SELECT id FROM \"user\" WHERE "
-    ctx.status = 200;
+    try {
+      const token = ctx.headers.authorization;
+      const decodedToken = <IJwtToken>jwt.verify(token, config.jwt.secret);
+      ctx.app.context.userid = decodedToken.id;
+      ctx.status = 200;
+    } catch (e) {
+      ctx.throw(401, config.responseMsg.unauthorized);
+      console.log(e)
+    }
   } else {
     ctx.throw(401, config.responseMsg.unauthorized);
   }

@@ -37,6 +37,8 @@ async function addStory(ctx: any, data: IStory, collectionId: number) {
     await saveStory(ctx.db, data);
     // add to table.collection_has_story
     await saveRelation(ctx.db, data.id, collectionId);
+    // Comments:
+
   } catch (e: any) {
     ctx.throw(400, e.name);
   }
@@ -62,6 +64,11 @@ async function saveStory(db: PoolClient, story: IStory) {
   } catch (e) {
     console.log(e)
   }
+}
+
+// PoolClient, IComment package?
+async function saveComment(db: PoolClient, id: Array<number>) {
+
 }
 
 async function saveRelation(db: PoolClient, story_id: number, collection_id: number) {

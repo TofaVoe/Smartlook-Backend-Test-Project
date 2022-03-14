@@ -5,6 +5,7 @@ interface IComment {
   text: string;
   by: string;
   parent: number; // The comment's parent: either another comment or the relevant story.
+  kids?: Array<number>; // Comments for this comment
 }
 
-export default
+export default IComment

@@ -71,7 +71,7 @@
     "build": "tsc --build",
     "start": "ts-node-dev src/server.ts",
     "dev": "node_modules/.bin/ts-node-dev --debug --poll --respawn src/server.ts",
-    "test": "NODE_ENV=test PORT=3001 jest --forceExit",
+    "test": "NODE_ENV=test PORT=3000 jest --forceExit",
     "test:watch": "npm run test -- --watchAll"
   }
 }

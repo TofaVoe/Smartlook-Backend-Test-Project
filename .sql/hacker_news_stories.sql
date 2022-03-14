@@ -1,10 +1,8 @@
 -- Adminer 4.8.1 PostgreSQL 13.6 dump
 
-\connect "hacker_news_stories";
-
 CREATE SEQUENCE story_collection_id_seq INCREMENT 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1;
 
-CREATE TABLE "public"."collection" (
+CREATE TABLE hacker_news_stories."collection" (
     "id" integer DEFAULT nextval('story_collection_id_seq') NOT NULL,
     "name" character(25) NOT NULL,
     "owner_id" integer NOT NULL,
@@ -14,7 +12,7 @@ CREATE TABLE "public"."collection" (
 
 CREATE SEQUENCE collection_has_story_id_seq INCREMENT 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1;
 
-CREATE TABLE "public"."collection_has_story" (
+CREATE TABLE hacker_news_stories."collection_has_story" (
     "id" integer DEFAULT nextval('collection_has_story_id_seq') NOT NULL,
     "id_story" integer NOT NULL,
     "id_collection" integer,
@@ -22,7 +20,7 @@ CREATE TABLE "public"."collection_has_story" (
 ) WITH (oids = false);
 
 
-CREATE TABLE "public"."story" (
+CREATE TABLE hacker_news_stories."story" (
     "id" integer NOT NULL,
     "time" timestamp NOT NULL,
     "type" character(25) NOT NULL,
@@ -34,12 +32,12 @@ CREATE TABLE "public"."story" (
     "url" character(255) NOT NULL
 ) WITH (oids = false);
 
-COMMENT ON COLUMN "public"."story"."by" IS 'author - name';
+COMMENT ON COLUMN hacker_news_stories."story"."by" IS 'author - name';
 
 
 CREATE SEQUENCE story_comment_id_seq INCREMENT 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1;
 
-CREATE TABLE "public"."story_comment" (
+CREATE TABLE hacker_news_stories."story_comment" (
     "id" integer DEFAULT nextval('story_comment_id_seq') NOT NULL,
     "time" timestamp NOT NULL,
     "type" character(25) NOT NULL,
@@ -53,7 +51,7 @@ CREATE TABLE "public"."story_comment" (
 
 CREATE SEQUENCE user_id_seq INCREMENT 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1;
 
-CREATE TABLE "public"."user" (
+CREATE TABLE hacker_news_stories."user" (
     "id" integer DEFAULT nextval('user_id_seq') NOT NULL,
     "name" character(25) NOT NULL,
     "email" character(255) NOT NULL,
