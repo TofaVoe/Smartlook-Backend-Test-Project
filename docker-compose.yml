@@ -14,29 +14,37 @@ services:
       POSTGRES_PASSWORD: hacker_news_stories
     volumes:
       - sl-postgres:/var/lib/postgresql/data
+      - .sql/:/docker-entrypoint-initdb.d
     ports:
-      - 5432:5432
+      - "5432:5432"
 
-  elastic:
-    image: docker.elastic.co/elasticsearch/elasticsearch-oss:7.10.2
-    container_name: sl-elastic
-    volumes:
-      - sl-elastic:/usr/share/elasticsearch/data
-    environment:
-      - ES_JAVA_OPTS=-Xms256m -Xmx256m
-      - discovery.type=single-node
-    ports:
-      - 9200:9200
+#  elastic:
+#    image: docker.elastic.co/elasticsearch/elasticsearch-oss:7.10.2
+#    container_name: sl-elastic
+#    volumes:
+#      - sl-elastic:/usr/share/elasticsearch/data
+#    environment:
+#      - ES_JAVA_OPTS=-Xms256m -Xmx256m
+#      - discovery.type=single-node
+#    ports:
+#      - "9200:9200"
 
   app:
-    image: .
+    build: .
+    container_name: sl-api
     working_dir: /home/node/app
     volumes:
-      - ./app:/home/node/app
-    expose:
-      - "3000"
-    command: "npm start"
+      - .:/home/node/app
+    command: bash -c "npm run dev"
+    ports:
+      - "3000:3000"
 
+  adminer:
+    image: adminer
+    container_name: sl-adminer
+    restart: always
+    ports:
+      - "8080:8080"
 
 volumes:
   sl-elastic:
