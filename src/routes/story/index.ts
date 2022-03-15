@@ -6,16 +6,18 @@ import collection from "../../services/collection";
 async function add(ctx: any) {
   const data = <IStoryAdd>ctx.request.body;
   const res = <IStory> await hackernews.getStory(ctx, data.storyId);
+
   if (res){
       await collection.addStory(ctx, res, data.collectionId);
+      await hackernews.getComments(ctx, res.kids, res.id);
+
       ctx.status = 200;
       ctx.body = {
         status: config.responseMsg.statusCreated
       }
   }
 }
-// story/delete (from collection)
-// input: story id
+
 async function remove(ctx: any) {
   const data = <IStoryRemove>ctx.request.body;
   try {

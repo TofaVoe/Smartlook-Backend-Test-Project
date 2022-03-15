@@ -2,7 +2,7 @@
 // Add story into collection
 
 import {IStory} from "../../types/entities/IStory";
-import {DatabaseError, PoolClient, QueryResult} from "pg";
+import { PoolClient, QueryResult} from "pg";
 
 
 
@@ -37,8 +37,6 @@ async function addStory(ctx: any, data: IStory, collectionId: number) {
     await saveStory(ctx.db, data);
     // add to table.collection_has_story
     await saveRelation(ctx.db, data.id, collectionId);
-    // Comments:
-
   } catch (e: any) {
     ctx.throw(400, e.name);
   }
@@ -58,7 +56,6 @@ async function saveStory(db: PoolClient, story: IStory) {
     story.kids,
     story.url
   ];
-  console.log(story);
   try {
     await db.query(query, values);
   } catch (e) {
@@ -66,13 +63,8 @@ async function saveStory(db: PoolClient, story: IStory) {
   }
 }
 
-// PoolClient, IComment package?
-async function saveComment(db: PoolClient, id: Array<number>) {
-
-}
-
 async function saveRelation(db: PoolClient, story_id: number, collection_id: number) {
-  let query = "INSERT INTO \"collection_has_story\"(id_story, id_collection) VALUES($1, $2) "
+  let query = "INSERT INTO \"collection_has_story\"(story_id, collection_id) VALUES($1, $2) "
   let values = [
     story_id,
     collection_id
@@ -86,13 +78,9 @@ async function removeStory(db: PoolClient, story_id: number, collection_id: numb
   const deletefromStoryvalues = [collection_id];
   await db.query(deletefromStory, deletefromStoryvalues)
 
-  const deletefromCollectionHasStory = "DELETE FROM \"collection_has_story\" WHERE id_collection = $1 AND id_story = $2";
+  const deletefromCollectionHasStory = "DELETE FROM \"collection_has_story\" WHERE collection_id = $1 AND story_id = $2";
   const deletefromCollectionHasStoryvalues = [collection_id, story_id];
   await db.query(deletefromCollectionHasStory, deletefromCollectionHasStoryvalues);
 }
-
-// Fetch story with comments
-
-// Note to trigger some if this with CRON
 
 export default {addStory, saveRelation, saveStory, removeStory, create, show, rename, remove}

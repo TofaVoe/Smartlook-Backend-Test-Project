@@ -21,5 +21,6 @@ router.delete('/collection/delete', user.verify, collection.remove);
 
 // /story
 router.post('/story/add', user.verify, story.add);
+router.post('/story/delete', user.verify, story.remove);
 
 export default router;

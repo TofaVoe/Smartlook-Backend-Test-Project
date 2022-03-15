@@ -1,8 +1,6 @@
 // HackerNews service
-import axios, {AxiosError} from "axios";
+import axios from "axios";
 import {config} from "../../types/IConfig";
-import IHackernews from "../../types/responce/IHackernews"
-import story from "../../routes/story";
 import {IStory} from "../../types/entities/IStory";
 import {PoolClient} from "pg";
 import Koa from "koa";
@@ -16,7 +14,6 @@ import IComment  from "../../types/entities/IComment";
 async function getStory(ctx: Koa.Context, id: number) {
   try {
     const res =  await axios.get(config.hackernews.url.item + id +'.json');
-    getComments(ctx, res.data.kids)
     return <IStory> res.data;
   } catch (e: any) {
     console.log(e);
@@ -24,15 +21,15 @@ async function getStory(ctx: Koa.Context, id: number) {
   }
 }
 
-async function getComments(ctx: any, ids: Array<number>) {
+async function getComments(ctx: any, comments_ids: Array<number>, story_id: number) {
   try {
-    for (const id of ids) {
+    for (const id of comments_ids) {
       const res = await axios.get(config.hackernews.url.item + id + '.json');
       const comment: IComment = res.data;
-      saveComment(ctx.db, comment);
-      // Save to DB
+      await saveComment(ctx.db, comment);
+      saveRelation(ctx.db, story_id, id);
       if (comment.kids) {
-        getComments(ctx, comment.kids);
+        getComments(ctx, comment.kids, story_id);
       }
     }
   } catch (e) {
@@ -42,7 +39,10 @@ async function getComments(ctx: any, ids: Array<number>) {
 }
 
 async function saveComment(db: PoolClient, comment: IComment) {
-  const query = "INSERT INTO \"story_comment\"(id, time, type, text, by, parent) " +
+
+  console.log(Date.now());
+
+  const query = "INSERT INTO \"comment\"(id, time, type, text, by, parent) " +
       "VALUES($1, to_timestamp($2), $3, $4, $5, $6 )";
   const values = [
       comment.id,
@@ -60,11 +60,14 @@ async function saveComment(db: PoolClient, comment: IComment) {
   }
 }
 
-
-async function fetchComments(storyId: number) {
-
+async function saveRelation(db: PoolClient, story_id: number, comment_id: number) {
+  const query = "INSERT INTO \"story_has_comment\"(story_id, comment_id) VALUES($1, $2)";
+  const values = [story_id, comment_id];
+  try {
+    await db.query(query, values);
+  } catch (e) {
+    console.log(e)
+  }
 }
 
-export default { getComments, getStory, fetchComments }
-
-// Fetch comments to story
+export default { getStory, getComments }

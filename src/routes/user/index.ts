@@ -121,9 +121,9 @@ async function about(ctx: Koa.Context) {
   const query = "SELECT * FROM \"user\" WHERE id = $1";
   const values = [ctx.userid ?? null]
   const user = await ctx.db.query(query, values);
-  console.log(user)
+
   ctx.status = 200;
-  ctx.body = user;
+  ctx.body = user.rows[0];
 }
 
 export default {register, login, verify, about};
