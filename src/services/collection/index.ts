@@ -31,11 +31,8 @@ async function remove(db: PoolClient, collectionId: number) {
 }
 
 async function addStory(ctx: any, data: IStory, collectionId: number) {
-  // save into collection data.collectionId
   try {
-    // add to table.story
     await saveStory(ctx.db, data);
-    // add to table.collection_has_story
     await saveRelation(ctx.db, data.id, collectionId);
   } catch (e: any) {
     ctx.throw(400, e.name);

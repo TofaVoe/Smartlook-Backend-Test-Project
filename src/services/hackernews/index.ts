@@ -26,7 +26,7 @@ async function getComments(ctx: any, comments_ids: Array<number>, story_id: numb
     for (const id of comments_ids) {
       const res = await axios.get(config.hackernews.url.item + id + '.json');
       const comment: IComment = res.data;
-      await saveComment(ctx.db, comment);
+      saveComment(ctx.db, comment);
       saveRelation(ctx.db, story_id, id);
       if (comment.kids) {
         getComments(ctx, comment.kids, story_id);
